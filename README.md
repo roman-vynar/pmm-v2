@@ -34,7 +34,7 @@ Agent for db node:
 
     cd percona-qan-agent 
     <Edit my.cnf with root(!) MySQL credentials>
-    <Edit docker-compose.yml and set HOST_IP to monitor IP>
+    <Edit docker-compose.yml and set HOST_IP to monitor IP and update path to slow.log>
     docker-compose up -d
 
 ### Credits

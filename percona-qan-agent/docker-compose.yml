@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  percona_qan_agent:
+    build: .
+    container_name: percona_qan_agent
+    volumes:
+      - ./my.cnf:/opt/.my.cnf
+      - /var/lib/mysql/centos7-slow.log:/var/lib/mysql/centos7-slow.log
+    environment:
+      - HOST_IP=192.168.56.107
+    network_mode: host
+

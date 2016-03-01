@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  percona_qan:
+    build: .
+    container_name: percona_qan
+    environment:
+      - HOST_IP=192.168.56.107
+    ports:
+      - "9001:9001"
+      - "9002:9002"
+

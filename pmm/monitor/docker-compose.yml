@@ -1,0 +1,96 @@
+version: '2'
+
+services:
+  prometheus_data:
+    image: prom/prometheus
+    container_name: prometheus_data
+    entrypoint: /bin/true
+
+  grafana_data:
+    image: grafana/grafana
+    container_name: grafana_data
+    volumes: 
+      - /usr/share/grafana
+    entrypoint: /bin/true
+
+  influx_data:
+    image: tutum/influxdb
+    container_name: influx_data
+    command: /bin/true
+
+  temp_image:
+    build: .
+    container_name: temp_box
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+    volumes_from:
+      - prometheus_data
+    ports:
+      - "9090:9090"
+    command: ["-config.file=/etc/prometheus/prometheus.yml", "-storage.local.path=/prometheus", "-storage.local.retention=192h", "-storage.local.memory-chunks=524288", "-storage.remote.influxdb-url=http://influxdb:8086"]
+    depends_on:
+      - influxdb
+
+  grafana_pre:
+    image: monitor_temp_image
+    container_name: grafana_pre
+    volumes:
+      - ./grafana:/scripts
+    volumes_from:
+      - grafana_data
+    command: /scripts/pre-run.sh
+    depends_on:
+      - temp_image
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes: 
+      - ./grafana:/etc/grafana
+    volumes_from:
+      - grafana_data
+    ports:
+      - "3000:3000"
+    entrypoint: /etc/grafana/run.sh
+    depends_on:
+      - grafana_pre
+
+  grafana_post:
+    image: monitor_temp_image
+    container_name: grafana_post
+    volumes:
+      - ./grafana:/scripts
+    volumes_from: 
+      - grafana_data
+    command: /scripts/post-run.sh
+    depends_on:
+      - temp_image
+      - grafana
+      - prometheus
+      - influxdb
+
+  influxdb:
+    image: tutum/influxdb
+    container_name: influxdb
+    volumes_from:
+      - influx_data
+    environment:
+      - PRE_CREATE_DB=prometheus
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+
+  influxdb_post:
+    image: monitor_temp_image
+    container_name: influxdb_post
+    volumes:
+      - ./influxdb:/scripts
+    command: /scripts/post-run.sh
+    depends_on:
+      - temp_image
+      - influxdb
+

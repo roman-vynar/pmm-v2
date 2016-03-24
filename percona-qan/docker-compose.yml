@@ -4,6 +4,7 @@ services:
   percona_qan:
     build: .
     container_name: percona_qan
+    image: percona_qan
     environment:
       - HOST_IP=192.168.56.107
     ports:

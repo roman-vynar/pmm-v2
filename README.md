@@ -22,6 +22,11 @@ Add host for monitoring at any time:
     <Edit my.cnf with MySQL credentials>
     docker-compose up -d
 
+MySQL privileges:
+
+    GRANT SELECT, UPDATE, DELETE, DROP ON performance_schema.* TO 'pmm'@'localhost';
+    GRANT REPLICATION CLIENT, PROCESS, SUPER, SELECT ON *.* TO 'pmm'@'localhost' IDENTIFIED BY 'percona2016';
+
 ### Percona Query Analytics
 
 Application for monitor host:

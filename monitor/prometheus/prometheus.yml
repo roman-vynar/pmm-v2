@@ -7,8 +7,6 @@ scrape_configs:
   - job_name: prometheus
     target_groups:
       - targets: ['localhost:9090']
-        labels:
-          alias: monitor
 
   - job_name: linux
     file_sd_configs:

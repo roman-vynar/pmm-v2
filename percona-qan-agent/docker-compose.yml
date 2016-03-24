@@ -4,6 +4,7 @@ services:
   percona_qan_agent:
     build: .
     container_name: percona_qan_agent
+    image: percona_qan_agent
     volumes:
       - ./my.cnf:/opt/.my.cnf
       - /var/lib/mysql/centos7-slow.log:/var/lib/mysql/centos7-slow.log
